@@ -1,6 +1,5 @@
 package ru.brykin.api.students.payload.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,10 +14,7 @@ import java.util.List;
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StudentDto {
-    @JsonProperty("id")
-    private int id;
-
+public class StudentDtoNoId {
     @JsonProperty("name")
     private String name;
 
@@ -26,19 +22,12 @@ public class StudentDto {
     private List<Integer> marks;
 
     // конструктор без id
-    public StudentDto(String name, List<Integer> marks) {
-        this.name = name;
-        this.marks = marks;
-    }
-
-    // конструктор со всеми полями
-    public StudentDto(int id, String name, List<Integer> marks) {
-        this.id = id;
+    public StudentDtoNoId(String name, List<Integer> marks) {
         this.name = name;
         this.marks = marks;
     }
 
     // конструктор без параметров
-    public StudentDto() {
+    public StudentDtoNoId() {
     }
 }

@@ -1,80 +1,102 @@
 package ru.brykin.api;
 
+import io.restassured.RestAssured;
+import io.restassured.parsing.Parser;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import ru.brykin.api.students.payload.entity.StudentDto;
 import ru.brykin.api.students.StudentApi;
+import ru.brykin.api.students.payload.entity.StudentDtoNoId;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 @Nested
 public class Tests {
     private StudentDto studentDtoA;
     private StudentDto studentDtoB;
+    private StudentDtoNoId studentDtoC;
     private StudentApi studentApi;
-    private final int IDA = 1;
+    private int IDA = 1;
     private final int IDB = 2;
     private boolean isCreated;
-    private final List<Integer> marksStudentA = new ArrayList<>(List.of(4,5));
+    private final List<Integer> marksStudentA = new ArrayList<>(List.of(4, 5));
     private final List<Integer> marksStudentB = new ArrayList<>(List.of(3));
     private final String nameStudentA = "Mark";
     private final String nameStudentB = "Lex";
+
+    @BeforeAll
+    static void setUpBeforeAll() {
+        // Устанавливаем парсер по умолчанию для JSON
+        RestAssured.defaultParser = Parser.JSON;
+    }
 
     @BeforeEach
     void setUp() {
         isCreated = false;
         studentApi = new StudentApi();
-        studentDtoA = createStudentExample(IDA, nameStudentA, marksStudentA);
-        studentDtoB = createStudentExample(IDB, nameStudentB, marksStudentB);
+        studentDtoA = new StudentDto(IDA, nameStudentA, marksStudentA);
+        studentDtoC = new StudentDtoNoId(nameStudentA,marksStudentA);
+        //studentDtoB = createStudentExample(nameStudentB, marksStudentB);
     }
 
-    private StudentDto createStudentExample(int id, String name, List<Integer> marks) {
-        return new StudentDto().setId(id).setName(name).setMarks(marks);
+    @AfterEach
+    void cleanUp() {
+        if (isCreated) {
+            studentApi.deleteStudentById(IDA);
+        }
     }
 
-   @AfterEach
-   void cleanUp() {
-        if (isCreated)
-       studentApi.deleteStudentById(IDA);
-   }
 
     @Test
-    void checkId() {    //1. get /student/{ID} возвращает JSON студента с указанным ID и заполненным именем, если такой есть в базе, код 200.
+    void checkId() { //1. get /student/{ID} возвращает JSON студента с указанным ID и заполненным именем, если такой есть в базе, код 200.
         studentApi.createStudent(studentDtoA);
         isCreated = true;
         StudentDto retrievedStudent = studentApi.getStudentById(IDA);
-        assertEquals(studentDtoA.getId(), retrievedStudent.getId());
+        assertEquals(IDA, retrievedStudent.getId());
     }
+
     @Test
-    void checkName() {    //1. get /student/{ID} возвращает JSON студента с указанным ID и заполненным именем, если такой есть в базе, код 200.
+    void checkName() { //1. get /student/{ID} возвращает JSON студента с указанным ID и заполненным именем, если такой есть в базе, код 200.
         studentApi.createStudent(studentDtoA);
         isCreated = true;
         StudentDto retrievedStudent = studentApi.getStudentById(IDA);
-        assertEquals(studentDtoA.getName(), retrievedStudent.getName());
+        assertEquals(nameStudentA, retrievedStudent.getName());
     }
+
     @Test
     void getStudent404() { //2. get /student/{ID} возвращает код 404, если студента с данным ID в базе нет.
-        assertEquals(404,studentApi.getStudent404(-1));
+        assertEquals(404, studentApi.getStudent404(-1));
     }
+
     @Test
     void checkAddStudentNotExisted() { //3. post /student добавляет студента в базу, если студента с таким ID ранее не было, при этом имя заполнено, код 201.
-        assertEquals(201,studentApi.createStudentReturnStatus(studentDtoA)); //студент запостился успешно 201 статус
-        StudentDto retrievedStudent = studentApi.getStudentById(IDA); //извлечена запись студента
-        assertEquals(studentDtoA.getName(), retrievedStudent.getName()); //имя записанного равно имени извлечённого
+        assertEquals(201, studentApi.createStudentReturnStatus(studentDtoA)); // студент запостился успешно 201 статус
+        StudentDto retrievedStudent = studentApi.getStudentById(IDA); // извлечена запись студента
+        assertEquals(studentDtoA.getName(), retrievedStudent.getName()); // имя записанного равно имени извлечённого
         isCreated = true;
     }
+
     @Test
     void checkUpdateStudent() { //4. post /student обновляет студента в базе, если студент с таким ID ранее был, при этом имя заполнено, код 201.
-        studentApi.createStudent(studentDtoA); //студент А запостился
-        assertEquals(201, studentApi.createStudentReturnStatus(createStudentExample(IDA, nameStudentB, marksStudentA))); // обновлено имя студента А на имя студента Б
-        StudentDto retrievedStudent = studentApi.getStudentById(IDA); //извлечена запись студента
-        assertEquals(nameStudentB, retrievedStudent.getName());//проверка обновления
+        studentApi.createStudent(studentDtoA); // студент A запостился
+        assertEquals(201, studentApi.createStudentReturnStatus(new StudentDto(IDA, nameStudentB, marksStudentA))); // обновлено имя студента A на имя студента B
+        StudentDto retrievedStudent = studentApi.getStudentById(IDA); // извлечена запись студента
+        assertEquals(nameStudentB, retrievedStudent.getName()); // проверка обновления
+        isCreated = true;
+    }
+
+    @Test
+    void checkCreateWithoutId() { //5. post /student добавляет студента в базу, если ID null, то возвращается назначенный ID, код 201.
+        List<Integer> createResult = studentApi.createStudentReturnId(studentDtoC);
+        assertEquals(201, createResult.get(0));
+        assertEquals(IDA, createResult.get(1));
         isCreated = true;
     }
 }
