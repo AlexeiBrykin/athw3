@@ -22,6 +22,7 @@ public class Tests {
     private StudentDto studentDtoA;
     private StudentDto studentDtoB;
     private StudentDtoNoId studentDtoC;
+    private StudentDtoNoId studentDtoD;
     private StudentApi studentApi;
     private int IDA = 1;
     private final int IDB = 2;
@@ -43,6 +44,8 @@ public class Tests {
         studentApi = new StudentApi();
         studentDtoA = new StudentDto(IDA, nameStudentA, marksStudentA);
         studentDtoC = new StudentDtoNoId(nameStudentA,marksStudentA);
+        studentDtoD = new StudentDtoNoId(IDA, marksStudentA);
+
         //studentDtoB = createStudentExample(nameStudentB, marksStudentB);
     }
 
@@ -98,5 +101,10 @@ public class Tests {
         assertEquals(201, createResult.get(0));
         assertEquals(IDA, createResult.get(1));
         isCreated = true;
+    }
+
+    @Test
+    void checkEmptyName() { //6 post /student возвращает код 400, если имя не заполнено.
+        assertEquals(400,studentApi.createStudentReturnStatus(studentDtoD));
     }
 }

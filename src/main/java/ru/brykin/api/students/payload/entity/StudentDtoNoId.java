@@ -11,10 +11,10 @@ import java.util.List;
 
 @Getter
 @Setter
-@Accessors(chain = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class StudentDtoNoId {
+    @JsonProperty("id")
+    private int id;
+
     @JsonProperty("name")
     private String name;
 
@@ -29,5 +29,10 @@ public class StudentDtoNoId {
 
     // конструктор без параметров
     public StudentDtoNoId() {
+    }
+
+    public StudentDtoNoId(int id, List<Integer> marksStudentA) {
+        this.id = id;
+        this.marks = marksStudentA;
     }
 }

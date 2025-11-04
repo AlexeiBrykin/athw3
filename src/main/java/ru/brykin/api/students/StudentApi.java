@@ -85,4 +85,13 @@ public class StudentApi extends _BaseApi {
         response.then().statusCode(200);
         log.info("Студент успешно удален");
     }
+
+    public int createStudentReturnStatus(final StudentDtoNoId student) {
+        log.info("Запрошено создание студента с возвратом статуса без именем");
+        Response response = jsonAutoAuth()
+                .basePath(StudentUrls.API_STUDENTS)
+                .body(student)
+                .post();
+        return  response.statusCode();
+    }
 }
