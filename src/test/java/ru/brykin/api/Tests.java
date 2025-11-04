@@ -104,7 +104,16 @@ public class Tests {
     }
 
     @Test
-    void checkEmptyName() { //6 post /student возвращает код 400, если имя не заполнено.
+    void checkEmptyName() { //6. post /student возвращает код 400, если имя не заполнено.
         assertEquals(400,studentApi.createStudentReturnStatus(studentDtoD));
+        isCreated = false;
+    }
+
+    @Test
+    void checkDeleteById() { //7. delete /student/{id} удаляет студента с указанным ID из базы, код 200.
+        studentApi.createStudent(studentDtoA);
+        studentApi.deleteStudentById(IDA);
+        assertEquals(404, studentApi.getStudent404(IDA));
+        isCreated = false;
     }
 }
