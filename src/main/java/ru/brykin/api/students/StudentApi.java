@@ -83,7 +83,15 @@ public class StudentApi extends _BaseApi {
                 .delete();
 
         response.then().statusCode(200);
-        log.info("Студент успешно удален");
+    }
+
+    public int deleteStudentById404(final int id) {
+        Response response = jsonAutoAuth()
+                .basePath(StudentUrls.API_STUDENTS + "/" + id)
+                .delete();
+
+        response.then().statusCode(404);
+        return response.statusCode();
     }
 
     public int createStudentReturnStatus(final StudentDtoNoId student) {

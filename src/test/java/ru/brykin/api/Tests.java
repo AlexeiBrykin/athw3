@@ -112,8 +112,15 @@ public class Tests {
     @Test
     void checkDeleteById() { //7. delete /student/{id} удаляет студента с указанным ID из базы, код 200.
         studentApi.createStudent(studentDtoA);
+        isCreated = true;
         studentApi.deleteStudentById(IDA);
-        assertEquals(404, studentApi.getStudent404(IDA));
+        assertEquals(404, studentApi.getStudent404(IDA)); //в базе нет удалённого студента
+        isCreated = false;
+    }
+
+    @Test
+    void checkDeleteById404() {//8. delete /student/{id} возвращает код 404, если студента с таким ID в базе нет.
+        assertEquals(404,studentApi.deleteStudentById404(-1));
         isCreated = false;
     }
 }
