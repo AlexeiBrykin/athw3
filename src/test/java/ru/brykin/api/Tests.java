@@ -63,8 +63,18 @@ public class Tests {
         assertEquals(404,studentApi.getStudent404(-1));
     }
     @Test
-    void checkAddStudentCode() { //3. post /student добавляет студента в базу, если студента с таким ID ранее не было, при этом имя заполнено, код 201.
-        assertEquals(201,studentApi.createStudentReturnStatus(studentDtoA));
+    void checkAddStudentNotExisted() { //3. post /student добавляет студента в базу, если студента с таким ID ранее не было, при этом имя заполнено, код 201.
+        assertEquals(201,studentApi.createStudentReturnStatus(studentDtoA)); //студент запостился успешно 201 статус
+        StudentDto retrievedStudent = studentApi.getStudentById(IDA); //извлечена запись студента
+        assertEquals(studentDtoA.getName(), retrievedStudent.getName()); //имя записанного равно имени извлечённого
+        isCreated = true;
+    }
+    @Test
+    void checkUpdateStudent() { //4. post /student обновляет студента в базе, если студент с таким ID ранее был, при этом имя заполнено, код 201.
+        studentApi.createStudent(studentDtoA); //студент А запостился
+        assertEquals(201, studentApi.createStudentReturnStatus(createStudentExample(IDA, nameStudentB, marksStudentA))); // обновлено имя студента А на имя студента Б
+        StudentDto retrievedStudent = studentApi.getStudentById(IDA); //извлечена запись студента
+        assertEquals(nameStudentB, retrievedStudent.getName());//проверка обновления
         isCreated = true;
     }
 }

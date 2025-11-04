@@ -44,6 +44,7 @@ public class StudentApi extends _BaseApi {
     }
 
     public int createStudentReturnStatus(final StudentDto student) {
+        log.info("Запрошено создание студента с возвратом статуса с именем - {}", student.getName());
         Response response = jsonAutoAuth()
                 .basePath(StudentUrls.API_STUDENTS)
                 .body(student)
