@@ -23,14 +23,14 @@ public class StudentApi extends _BaseApi {
         return response.as(StudentDto.class);
     }
 
-    public void getStudent404(final int id) {
+    public int getStudent404(final int id) {
         log.info("Получить статус 404 студента по id = {}", id);
 
         Response response = jsonAutoAuth()
                 .basePath(StudentUrls.API_STUDENTS + "/" + id)
                 .get();
 
-        response.then().statusCode(404);
+        return response.statusCode();
     }
 
     public void createStudent(final StudentDto student) {
@@ -41,6 +41,15 @@ public class StudentApi extends _BaseApi {
                 .post();
 
         response.then().statusCode(201);
+    }
+
+    public int createStudentReturnStatus(final StudentDto student) {
+        Response response = jsonAutoAuth()
+                .basePath(StudentUrls.API_STUDENTS)
+                .body(student)
+                .post();
+
+        return response.statusCode();
     }
 
     public void deleteStudentById(final int id) {
