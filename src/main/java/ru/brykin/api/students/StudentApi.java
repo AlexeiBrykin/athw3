@@ -71,28 +71,8 @@ public class StudentApi extends _BaseApi {
                 .basePath(StudentUrls.API_STUDENTS)
                 .body(student)
                 .post();
-
         response.then().statusCode(201);
-
-        // Получаем строку из тела ответа
-        String responseBody = response.getBody().asString();
-        log.info("Тело ответа: {}", responseBody);
-
-        // Проверяем, что тело ответа не пустое
-        if (responseBody == null || responseBody.trim().isEmpty()) {
-            throw new RuntimeException("Тело ответа пустое");
-        }
-
-        // Преобразуем строку в целое число
-        int studentId;
-        try {
-            studentId = Integer.parseInt(responseBody);
-        } catch (NumberFormatException e) {
-            throw new RuntimeException("Неверный формат ID в ответе: " + responseBody, e);
-        }
-
-        log.info("id созданного студента = {}", studentId);
-        return new ArrayList<>(List.of(response.getStatusCode(), studentId));
+        return new ArrayList<>(List.of(response.getStatusCode(), Integer.parseInt(response.getBody().asString())));
     }
 
     public void deleteStudentById(final int id) {
