@@ -15,7 +15,6 @@ public class StudentApi extends _BaseApi {
 
     public StudentDto getStudentById(final int id) {
         log.info("Получить студента по id = {}", id);
-
         Response response = jsonAutoAuth()
                 .basePath(StudentUrls.API_STUDENTS + "/" + id)
                 .get();
@@ -24,8 +23,18 @@ public class StudentApi extends _BaseApi {
         return response.as(StudentDto.class);
     }
 
+    public void getStudent404(final int id) {
+        log.info("Получить статус 404 студента по id = {}", id);
+
+        Response response = jsonAutoAuth()
+                .basePath(StudentUrls.API_STUDENTS + "/" + id)
+                .get();
+
+        response.then().statusCode(404);
+    }
+
     public void createStudent(final StudentDto student) {
-    //    log.info("Создать студент с именем - {}", student.getName());
+        log.info("Создать студент с именем - {}", student.getName());
         Response response = jsonAutoAuth()
                 .basePath(StudentUrls.API_STUDENTS)
                 .body(student)
@@ -35,7 +44,7 @@ public class StudentApi extends _BaseApi {
     }
 
     public void deleteStudentById(final int id) {
-        log.info("Удалить студента по id - {}", id);
+        log.info("Удалить студента по id : {}", id);
 
         jsonAutoAuth()
                 .basePath(StudentUrls.API_STUDENTS + "/" + id)
