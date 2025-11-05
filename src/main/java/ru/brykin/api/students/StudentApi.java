@@ -4,12 +4,11 @@ import io.restassured.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import ru.brykin.api._base._BaseApi;
 import ru.brykin.api.students.payload.entity.StudentDto;
-import ru.brykin.api.students.payload.entity.StudentDtoNoId;
+import ru.brykin.api.students.payload.entity.StudentDtoRequest;
 import ru.brykin.env.Env;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 public class StudentApi extends _BaseApi {
@@ -64,7 +63,7 @@ public class StudentApi extends _BaseApi {
         return statusCode;
     }
 
-    public List<Integer> createStudentReturnId(final StudentDtoNoId student) {
+    public List<Integer> createStudentReturnId(final StudentDtoRequest student) {
         log.info("Запрошено создание студента с возвратом Id с именем - {}", student.getName());
 
         Response response = jsonAutoAuth()
@@ -94,7 +93,7 @@ public class StudentApi extends _BaseApi {
         return response.statusCode();
     }
 
-    public int createStudentReturnStatus(final StudentDtoNoId student) {
+    public int createStudentReturnStatus(final StudentDtoRequest student) {
         log.info("Запрошено создание студента с возвратом статуса без именем");
         Response response = jsonAutoAuth()
                 .basePath(StudentUrls.API_STUDENTS)

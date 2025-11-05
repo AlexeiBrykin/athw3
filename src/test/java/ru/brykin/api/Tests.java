@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import ru.brykin.api.students.payload.entity.StudentDto;
 import ru.brykin.api.students.StudentApi;
-import ru.brykin.api.students.payload.entity.StudentDtoNoId;
+import ru.brykin.api.students.payload.entity.StudentDtoRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 public class Tests {
     private StudentDto studentDtoA;
     private StudentDto studentDtoB;
-    private StudentDtoNoId studentDtoC;
-    private StudentDtoNoId studentDtoD;
+    private StudentDtoRequest studentDtoC;
+    private StudentDtoRequest studentDtoD;
     private StudentApi studentApi;
     private int IDA = 1;
     private final int IDB = 2;
@@ -43,8 +43,8 @@ public class Tests {
         isCreated = false;
         studentApi = new StudentApi();
         studentDtoA = new StudentDto(IDA, nameStudentA, marksStudentA);
-        studentDtoC = new StudentDtoNoId(nameStudentA,marksStudentA);
-        studentDtoD = new StudentDtoNoId(IDA, marksStudentA);
+        studentDtoC = new StudentDtoRequest(nameStudentA,marksStudentA);
+        studentDtoD = new StudentDtoRequest(IDA, marksStudentA);
 
         //studentDtoB = createStudentExample(nameStudentB, marksStudentB);
     }

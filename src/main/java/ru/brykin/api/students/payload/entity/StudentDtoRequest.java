@@ -1,19 +1,19 @@
 package ru.brykin.api.students.payload.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 
+
+import javax.annotation.Nullable;
 import java.util.List;
 
 @Getter
 @Setter
-public class StudentDtoNoId {
+public class StudentDtoRequest {
     @JsonProperty("id")
-    private int id;
+    @Nullable
+    private Integer id;
 
     @JsonProperty("name")
     private String name;
@@ -22,16 +22,16 @@ public class StudentDtoNoId {
     private List<Integer> marks;
 
     // конструктор без id
-    public StudentDtoNoId(String name, List<Integer> marks) {
+    public StudentDtoRequest(String name, List<Integer> marks) {
         this.name = name;
         this.marks = marks;
     }
 
     // конструктор без параметров
-    public StudentDtoNoId() {
+    public StudentDtoRequest() {
     }
 
-    public StudentDtoNoId(int id, List<Integer> marksStudentA) {
+    public StudentDtoRequest(int id, List<Integer> marksStudentA) {
         this.id = id;
         this.marks = marksStudentA;
     }
