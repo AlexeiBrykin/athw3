@@ -27,12 +27,14 @@ public class StudentDtoRequest {
         this.marks = marks;
     }
 
-    // конструктор без параметров
-    public StudentDtoRequest() {
+    // конструктор только имя
+    public StudentDtoRequest(int id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
-    public StudentDtoRequest(int id, List<Integer> marksStudentA) {
+    public StudentDtoRequest(int id, List<Integer> marks) {
         this.id = id;
-        this.marks = marksStudentA;
+        this.marks = marks;
     }
 }

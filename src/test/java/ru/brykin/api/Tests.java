@@ -18,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Nested
 public class Tests {
-    private StudentDto studentDtoA;
-    private StudentDto studentDtoB;
+    private StudentDto studentDtoA; //обычный
+    private StudentDtoRequest studentDtoB; //без оценок
     private StudentDtoRequest studentDtoC;
     private StudentDtoRequest studentDtoD;
     private StudentApi studentApi;
-    private int IDA = 1;
-    private final int IDB = 2;
+    private final int IDA = 1;
+    //private final int IDB = 2;
     private boolean isCreated;
     private final List<Integer> marksStudentA = new ArrayList<>(List.of(4, 5));
     private final List<Integer> marksStudentB = new ArrayList<>(List.of(3));
@@ -42,6 +42,7 @@ public class Tests {
         isCreated = false;
         studentApi = new StudentApi();
         studentDtoA = new StudentDto(IDA, nameStudentA, marksStudentA);
+        studentDtoB = new StudentDtoRequest(IDA, nameStudentA); //без оценок
         studentDtoC = new StudentDtoRequest(nameStudentA,marksStudentA);
         studentDtoD = new StudentDtoRequest(IDA, marksStudentA);
 
@@ -131,11 +132,21 @@ public class Tests {
         isCreated = false;
     }
 
-//    @Test
-//    void checkTopStudent() {
-//        studentApi.createStudent(studentDtoA);
-//        isCreated = true;
-//        List<StudentDto> returned = studentApi.getTopStudent();
-//        //assertEquals(studentDtoA, returned.get(0));
-//    }
+    @Test
+    void checkTopStudentEmptyNoMarks() { //10. get /topStudent код 200 и пустое тело, если ни у кого из студентов в базе нет оценок.
+        studentApi.createStudent(studentDtoB);
+        isCreated = true;
+        List<StudentDto> returned = studentApi.getTopStudent();
+        System.out.println(returned);
+        assertTrue(returned.isEmpty());
+    }
+
+    @Test
+    void checkTopStudent() {
+        studentApi.createStudent(studentDtoA);
+        isCreated = true;
+        List<StudentDto> returned = studentApi.getTopStudent();
+        assertTrue(returned.get(0).equals(studentDtoA));
+        //assertEquals(studentDtoA, returned.get(0))
+    }
 }

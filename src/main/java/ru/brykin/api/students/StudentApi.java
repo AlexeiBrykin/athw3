@@ -52,6 +52,16 @@ public class StudentApi extends _BaseApi {
         response.then().statusCode(201);
         log.info("Студент успешно создан");
     }
+    public void createStudent(final StudentDtoRequest student) {
+        log.info("Создать студента с именем - {}", student.getName());
+        Response response = jsonAutoAuth()
+                .basePath(StudentUrls.API_STUDENTS)
+                .body(student)
+                .post();
+
+        response.then().statusCode(201);
+        log.info("Студент успешно создан");
+    }
 
     public int createStudentReturnStatus(final StudentDto student) {
         log.info("Запрошено создание студента с возвратом статуса с именем - {}", student.getName());
