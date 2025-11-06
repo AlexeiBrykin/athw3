@@ -20,16 +20,19 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Tests {
     private StudentDto studentDtoA; //обычный
     private StudentDtoRequest studentDtoB; //без оценок
-    private StudentDtoRequest studentDtoC;
+    private StudentDto studentDtoC; //второй обычный, оценки ниже средней
     private StudentDtoRequest studentDtoD;
+    private StudentDtoRequest studentDtoE;
     private StudentApi studentApi;
     private final int IDA = 1;
-    //private final int IDB = 2;
+    private final int IDB = 2;
+    private final int IDC = 3;
     private boolean isCreated;
     private final List<Integer> marksStudentA = new ArrayList<>(List.of(4, 5));
-    private final List<Integer> marksStudentB = new ArrayList<>(List.of(3));
+    private final List<Integer> marksStudentC = new ArrayList<>(List.of(3)); //второй обычный, оценки ниже средней
     private final String nameStudentA = "Mark";
     private final String nameStudentB = "Lex";
+    private final String nameStudentC = "Xan";
 
     @BeforeAll
     static void setUpBeforeAll() {
@@ -42,9 +45,10 @@ public class Tests {
         isCreated = false;
         studentApi = new StudentApi();
         studentDtoA = new StudentDto(IDA, nameStudentA, marksStudentA);
-        studentDtoB = new StudentDtoRequest(IDA, nameStudentA); //без оценок
-        studentDtoC = new StudentDtoRequest(nameStudentA,marksStudentA);
+        studentDtoB = new StudentDtoRequest(IDB, nameStudentA); //без оценок
+        studentDtoC = new StudentDto(IDC, nameStudentC, marksStudentC);
         studentDtoD = new StudentDtoRequest(IDA, marksStudentA);
+        studentDtoE = new StudentDtoRequest(nameStudentA, marksStudentA);
 
         //studentDtoB = createStudentExample(nameStudentB, marksStudentB);
     }
@@ -97,7 +101,7 @@ public class Tests {
 
     @Test
     void checkCreateWithoutId() { //5. post /student добавляет студента в базу, если ID null, то возвращается назначенный ID, код 201.
-        List<Integer> createResult = studentApi.createStudentReturnId(studentDtoC);
+        List<Integer> createResult = studentApi.createStudentReturnId(studentDtoD);
         assertEquals(201, createResult.get(0));
         assertEquals(IDA, createResult.get(1));
         isCreated = true;
@@ -139,6 +143,18 @@ public class Tests {
         List<StudentDto> returned = studentApi.getTopStudent();
         System.out.println(returned);
         assertTrue(returned.isEmpty());
+    }
+
+    @Test
+    void checkTopStudentOneMaxRate() { //11 get /topStudent код 200 и один студент, если у него максимальная средняя оценка, либо же среди всех студентов с максимальной средней у него их больше всего.
+        studentApi.createStudent(studentDtoA);
+        studentApi.createStudent(studentDtoC);
+        studentApi.createStudent(studentDtoB);
+        List<StudentDto> returned = studentApi.getTopStudent();
+        assertTrue(returned.get(0).equals(studentDtoA));
+        studentApi.deleteStudentById(IDA);  //почистить 1 студента
+        studentApi.deleteStudentById(IDB);  //почистить 2 студента
+        studentApi.deleteStudentById(IDC);  //почистить 2 студента
     }
 
     @Test
