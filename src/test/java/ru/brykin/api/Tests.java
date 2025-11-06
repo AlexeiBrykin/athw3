@@ -23,10 +23,12 @@ public class Tests {
     private StudentDto studentDtoC; //второй обычный, оценки ниже средней
     private StudentDtoRequest studentDtoD;
     private StudentDtoRequest studentDtoE;
+    private StudentDto studentDtoF; //оценки как у А, но он другой
     private StudentApi studentApi;
     private final int IDA = 1;
     private final int IDB = 2;
     private final int IDC = 3;
+    private final int IDF = 4;
     private boolean isCreated;
     private final List<Integer> marksStudentA = new ArrayList<>(List.of(4, 5));
     private final List<Integer> marksStudentC = new ArrayList<>(List.of(3)); //второй обычный, оценки ниже средней
@@ -45,6 +47,7 @@ public class Tests {
         isCreated = false;
         studentApi = new StudentApi();
         studentDtoA = new StudentDto(IDA, nameStudentA, marksStudentA);
+        studentDtoF = new StudentDto(IDF, nameStudentA, marksStudentA); //оценки как у А, но он другой
         studentDtoB = new StudentDtoRequest(IDB, nameStudentB); //без оценок
         studentDtoC = new StudentDto(IDC, nameStudentC, marksStudentC);
         studentDtoD = new StudentDtoRequest(IDA, marksStudentA);
@@ -146,7 +149,7 @@ public class Tests {
     }
 
     @Test
-    void checkTopStudentOneMaxRate() { //11 get /topStudent код 200 и один студент, если у него максимальная средняя оценка, либо же среди всех студентов с максимальной средней у него их больше всего.
+    void checkTopStudentOneMaxRate() { //11. get /topStudent код 200 и один студент, если у него максимальная средняя оценка, либо же среди всех студентов с максимальной средней у него их больше всего.
         studentApi.createStudent(studentDtoA);
         studentApi.createStudent(studentDtoC);
         studentApi.createStudent(studentDtoB);
@@ -158,11 +161,15 @@ public class Tests {
     }
 
     @Test
-    void checkTopStudent() {
+    void checkTopStudent() { //12. get /topStudent код 200 и несколько студентов, если у них всех эта оценка максимальная и при этом они равны по количеству оценок.
         studentApi.createStudent(studentDtoA);
-        isCreated = true;
+        studentApi.createStudent(studentDtoF);
+        studentApi.createStudent(studentDtoC);
         List<StudentDto> returned = studentApi.getTopStudent();
         assertTrue(returned.get(0).equals(studentDtoA));
-        //assertEquals(studentDtoA, returned.get(0))
+        assertTrue(returned.get(1).equals(studentDtoF));
+        studentApi.deleteStudentById(IDA);  //почистить 1 студента
+        studentApi.deleteStudentById(IDF);  //почистить 2 студента
+        studentApi.deleteStudentById(IDC);  //почистить 3 студента
     }
 }
