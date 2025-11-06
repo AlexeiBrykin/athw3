@@ -45,7 +45,7 @@ public class Tests {
         isCreated = false;
         studentApi = new StudentApi();
         studentDtoA = new StudentDto(IDA, nameStudentA, marksStudentA);
-        studentDtoB = new StudentDtoRequest(IDB, nameStudentA); //без оценок
+        studentDtoB = new StudentDtoRequest(IDB, nameStudentB); //без оценок
         studentDtoC = new StudentDto(IDC, nameStudentC, marksStudentC);
         studentDtoD = new StudentDtoRequest(IDA, marksStudentA);
         studentDtoE = new StudentDtoRequest(nameStudentA, marksStudentA);
@@ -101,7 +101,7 @@ public class Tests {
 
     @Test
     void checkCreateWithoutId() { //5. post /student добавляет студента в базу, если ID null, то возвращается назначенный ID, код 201.
-        List<Integer> createResult = studentApi.createStudentReturnId(studentDtoD);
+        List<Integer> createResult = studentApi.createStudentReturnId(studentDtoE);
         assertEquals(201, createResult.get(0));
         assertEquals(IDA, createResult.get(1));
         isCreated = true;
@@ -139,10 +139,10 @@ public class Tests {
     @Test
     void checkTopStudentEmptyNoMarks() { //10. get /topStudent код 200 и пустое тело, если ни у кого из студентов в базе нет оценок.
         studentApi.createStudent(studentDtoB);
-        isCreated = true;
         List<StudentDto> returned = studentApi.getTopStudent();
         System.out.println(returned);
         assertTrue(returned.isEmpty());
+        studentApi.deleteStudentById(IDB);
     }
 
     @Test
