@@ -52,8 +52,6 @@ public class Tests {
         studentDtoC = new StudentDto(IDC, nameStudentC, marksStudentC);
         studentDtoD = new StudentDtoRequest(IDA, marksStudentA);
         studentDtoE = new StudentDtoRequest(nameStudentA, marksStudentA);
-
-        //studentDtoB = createStudentExample(nameStudentB, marksStudentB);
     }
 
     @AfterEach
