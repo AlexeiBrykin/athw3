@@ -14,8 +14,7 @@ import ru.brykin.api.students.payload.entity.StudentDtoRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Nested
 public class Tests {
@@ -123,4 +122,20 @@ public class Tests {
         assertEquals(404,studentApi.deleteStudentById404(-1));
         isCreated = false;
     }
+
+    @Test
+    void checkTopStudentEmpty() { //9. get /topStudent код 200 и пустое тело, если студентов в базе нет.
+        List<StudentDto> returned = studentApi.getTopStudent();
+        System.out.println(returned);
+        assertTrue(returned.isEmpty());
+        isCreated = false;
+    }
+
+//    @Test
+//    void checkTopStudent() {
+//        studentApi.createStudent(studentDtoA);
+//        isCreated = true;
+//        List<StudentDto> returned = studentApi.getTopStudent();
+//        //assertEquals(studentDtoA, returned.get(0));
+//    }
 }

@@ -8,6 +8,8 @@ import ru.brykin.api.students.payload.entity.StudentDtoRequest;
 import ru.brykin.env.Env;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -99,6 +101,18 @@ public class StudentApi extends _BaseApi {
                 .basePath(StudentUrls.API_STUDENTS)
                 .body(student)
                 .post();
-        return  response.statusCode();
+        return response.statusCode();
+    }
+
+    public List<StudentDto> getTopStudent() {
+        log.info("Получить лучшего студента");
+        Response response = jsonAutoAuth()
+                .basePath(StudentUrls.API_TOP_STUDENT)
+                .get();
+        response.then().statusCode(200);
+        if (response.body().asString().trim().isEmpty()) {
+            log.info("Ответ от сервера пустой");
+            return Collections.emptyList();}
+        return Arrays.asList(response.jsonPath().getObject("", StudentDto[].class));
     }
 }
