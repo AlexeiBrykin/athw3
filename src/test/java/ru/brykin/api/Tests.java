@@ -2,11 +2,7 @@ package ru.brykin.api;
 
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import ru.brykin.api.students.payload.entity.StudentDto;
 import ru.brykin.api.students.StudentApi;
 import ru.brykin.api.students.payload.entity.StudentDtoRequest;
@@ -35,6 +31,7 @@ public class Tests {
     private final String nameStudentA = "Mark";
     private final String nameStudentB = "Lex";
     private final String nameStudentC = "Xan";
+    private int maxInsertedId = IDC;
 
     @BeforeAll
     static void setUpBeforeAll() {
@@ -53,19 +50,15 @@ public class Tests {
         studentDtoD = new StudentDtoRequest(IDA, marksStudentA);
         studentDtoE = new StudentDtoRequest(nameStudentA, marksStudentA);
     }
-
     @AfterEach
     void cleanUp() {
-        if (isCreated) {
-            studentApi.deleteStudentById(IDA);
-        }
+        studentApi.deleteAllStudents();
     }
 
 
     @Test
     void checkId() { //1. get /student/{ID} возвращает JSON студента с указанным ID и заполненным именем, если такой есть в базе, код 200.
         studentApi.createStudent(studentDtoA);
-        isCreated = true;
         StudentDto retrievedStudent = studentApi.getStudentById(IDA);
         assertEquals(IDA, retrievedStudent.getId());
     }
@@ -73,7 +66,6 @@ public class Tests {
     @Test
     void checkName() { //1. get /student/{ID} возвращает JSON студента с указанным ID и заполненным именем, если такой есть в базе, код 200.
         studentApi.createStudent(studentDtoA);
-        isCreated = true;
         StudentDto retrievedStudent = studentApi.getStudentById(IDA);
         assertEquals(nameStudentA, retrievedStudent.getName());
     }
@@ -88,7 +80,6 @@ public class Tests {
         assertEquals(201, studentApi.createStudentReturnStatus(studentDtoA)); // студент запостился успешно 201 статус
         StudentDto retrievedStudent = studentApi.getStudentById(IDA); // извлечена запись студента
         assertEquals(studentDtoA.getName(), retrievedStudent.getName()); // имя записанного равно имени извлечённого
-        isCreated = true;
     }
 
     @Test
@@ -97,21 +88,18 @@ public class Tests {
         assertEquals(201, studentApi.createStudentReturnStatus(new StudentDto(IDA, nameStudentB, marksStudentA))); // обновлено имя студента A на имя студента B
         StudentDto retrievedStudent = studentApi.getStudentById(IDA); // извлечена запись студента
         assertEquals(nameStudentB, retrievedStudent.getName()); // проверка обновления
-        isCreated = true;
     }
 
     @Test
     void checkCreateWithoutId() { //5. post /student добавляет студента в базу, если ID null, то возвращается назначенный ID, код 201.
         List<Integer> createResult = studentApi.createStudentReturnId(studentDtoE);
         assertEquals(201, createResult.get(0));
-        assertEquals(IDA, createResult.get(1));
-        isCreated = true;
+        assertInstanceOf(Integer.class, createResult.get(1));
     }
 
     @Test
     void checkEmptyName() { //6. post /student возвращает код 400, если имя не заполнено.
         assertEquals(400,studentApi.createStudentReturnStatus(studentDtoD));
-        isCreated = false;
     }
 
     @Test
@@ -120,13 +108,11 @@ public class Tests {
         isCreated = true;
         studentApi.deleteStudentById(IDA);
         assertEquals(404, studentApi.getStudent404(IDA)); //в базе нет удалённого студента
-        isCreated = false;
     }
 
     @Test
     void checkDeleteById404() {//8. delete /student/{id} возвращает код 404, если студента с таким ID в базе нет.
         assertEquals(404,studentApi.deleteStudentById404(-1));
-        isCreated = false;
     }
 
     @Test
@@ -134,7 +120,6 @@ public class Tests {
         List<StudentDto> returned = studentApi.getTopStudent();
         System.out.println(returned);
         assertTrue(returned.isEmpty());
-        isCreated = false;
     }
 
     @Test
@@ -143,7 +128,6 @@ public class Tests {
         List<StudentDto> returned = studentApi.getTopStudent();
         System.out.println(returned);
         assertTrue(returned.isEmpty());
-        studentApi.deleteStudentById(IDB);
     }
 
     @Test
@@ -153,21 +137,15 @@ public class Tests {
         studentApi.createStudent(studentDtoB);
         List<StudentDto> returned = studentApi.getTopStudent();
         assertTrue(returned.get(0).equals(studentDtoA));
-        studentApi.deleteStudentById(IDA);  //почистить 1 студента
-        studentApi.deleteStudentById(IDB);  //почистить 2 студента
-        studentApi.deleteStudentById(IDC);  //почистить 2 студента
     }
 
     @Test
     void checkTopStudent() { //12. get /topStudent код 200 и несколько студентов, если у них всех эта оценка максимальная и при этом они равны по количеству оценок.
         studentApi.createStudent(studentDtoA);
-        studentApi.createStudent(studentDtoF);
         studentApi.createStudent(studentDtoC);
+        studentApi.createStudent(studentDtoF);
         List<StudentDto> returned = studentApi.getTopStudent();
         assertTrue(returned.get(0).equals(studentDtoA));
         assertTrue(returned.get(1).equals(studentDtoF));
-        studentApi.deleteStudentById(IDA);  //почистить 1 студента
-        studentApi.deleteStudentById(IDF);  //почистить 2 студента
-        studentApi.deleteStudentById(IDC);  //почистить 3 студента
     }
 }

@@ -125,4 +125,12 @@ public class StudentApi extends _BaseApi {
             return Collections.emptyList();}
         return Arrays.asList(response.jsonPath().getObject("", StudentDto[].class));
     }
+    public void deleteAllStudents() {
+        log.info("Удалить всех студентов");
+        for (int i = 0; i < 10; i++) {
+            Response response = jsonAutoAuth()
+                    .basePath(StudentUrls.API_STUDENTS + "/" + i)
+                    .delete();
+        }
+    }
 }
